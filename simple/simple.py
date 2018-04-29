@@ -117,8 +117,18 @@ def parseWord(data):
 
 if __name__ == '__main__':
 	
+if __name__ == '__main__':
+	
 	trainData, validData, testData = loadData()
+	scoreDistribution(trainData+validData+testData)
 
-	# d = simpleReg(trainData)
+	d = simpleReg(trainData)
 
-	parseWord(testData)
+	pred = []
+	for i in validData:
+		if i['target'] in d: 
+			pred.append(d[i['target']])
+		else:
+			pred.append(0)
+
+	pprint(evaluation(pred,[float(i['sentiment']) for i in validData])) 
