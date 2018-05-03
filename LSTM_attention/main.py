@@ -256,6 +256,7 @@ def main():
         #print("snippets.shape =", snippets.shape)
         #print("targets.shape =", targets.shape)
         predictions = model.predict([tweets, snippets, targets])
+        preidctions = predictions.reshape(-1)
         #print(predictions)
         #print(Y.shape)
         #scores = np.sum((predictions - Y)**2)/len(Y)
@@ -287,6 +288,7 @@ def main():
         snippets = X[1, :]
         targets = X[2, :]
         predictions = model.predict([tweets, snippets, targets])
+        preidctions = predictions.reshape(-1)
         #scores = np.sum((predictions - Y)**2)/len(Y)
         scores = model.evaluate([tweets, snippets, targets], Y)
         print("train data mse by keras = %f" % scores[1])

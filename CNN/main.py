@@ -193,8 +193,8 @@ def main():
         args.val_ratio = 0
         (X,Y), (X_val, Y_val) = dm.split_data('test_data', args.val_ratio)
         predictions = model.predict(X)
-        scores = model.evaluate(X, Y)
         predictions = predictions.reshape(-1)
+        scores = model.evaluate(X, Y)
         print("test data mse by keras = %f" % scores[1])
         print("test data mse by sklearn = %f" % mean_squared_error(Y, predictions))
         for idx, value in enumerate(predictions):
@@ -218,6 +218,7 @@ def main():
 
         (X,Y), (X_val, Y_val) = dm.split_data('train_data', args.val_ratio)
         predictions = model.predict(X)
+        predictions = predictions.reshape(-1)
         scores = model.evaluate(X, Y)
         print("train data mse by keras = %f" % scores[1])
         print("train data mse by sklearn = %f" % mean_squared_error(Y, predictions))
