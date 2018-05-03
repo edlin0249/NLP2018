@@ -3,6 +3,8 @@ import keras
 import _pickle as pk
 import readline
 import numpy as np
+from sklearn.metrics import f1_score
+from sklearn.metrics import mean_squared_error
 
 from keras import regularizers
 from keras.models import Model
@@ -24,7 +26,7 @@ parser.add_argument('action', choices=['train','test','semi'])
 
 # training argument
 parser.add_argument('--batch_size', default=128, type=float)
-parser.add_argument('--nb_epoch', default=20, type=int)
+parser.add_argument('--nb_epoch', default=6, type=int)
 parser.add_argument('--val_ratio', default=0.1, type=float)
 parser.add_argument('--gpu_fraction', default=0.3, type=float)
 parser.add_argument('--vocab_size', default=20000, type=int)
@@ -131,7 +133,7 @@ def simpleRNN(args):
                     #kernel_regularizer=regularizers.l2(0.1))(RNN_output)
     #outputs = Dropout(dropout_rate)(outputs)
     #outputs = Dense(1, activation='linear')(outputs)
-        
+    print("output_final.shape =", output_final.shape)
     model =  Model(inputs=[inputs_tweets, inputs_snippets, inputs_targets], outputs=output_final)
 
     # optimizer
@@ -163,6 +165,7 @@ def main():
         dm.add_data('train_data', train_path, True)
         dm.add_data('semi_data', semi_path, False)
     elif args.action == 'test':
+        dm.add_data('train_data', train_path, True)
         dm.add_data('test_data', test_path, True)
     else:
         raise Exception ('Action except for train, semi, and test')
@@ -236,6 +239,9 @@ def main():
                             epochs=args.nb_epoch, 
                             batch_size=args.batch_size)#,
                             #callbacks=[checkpoint, earlystopping] )
+        predictions = model.predict([tweets, snippets, targets])
+        #print(predictions.shape)
+        #print(predictions)
 
         model.save(save_path) 
 
@@ -243,15 +249,66 @@ def main():
     elif args.action == 'test' :
         args.val_ratio = 0
         (X,Y), (X_val, Y_val) = dm.split_data('test_data', args.val_ratio)
-        tweets = X[:, 0]
-        snippets = X[:, 1]
-        targets = X[:, 2]
+        tweets = X[0, :]
+        snippets = X[1, :]
+        targets = X[2, :]
+        #print("tweets.shape =", tweets.shape)
+        #print("snippets.shape =", snippets.shape)
+        #print("targets.shape =", targets.shape)
         predictions = model.predict([tweets, snippets, targets])
-        scores = np.sum((predictions - Y)**2)/len(Y)
-        #scores = model.evaluate([tweets, snippets, targets], Y)
-        print("test data scores(loss = mse) = %f" % scores)
+        #print(predictions)
+        #print(Y.shape)
+        #scores = np.sum((predictions - Y)**2)/len(Y)
+        scores = model.evaluate([tweets, snippets, targets], Y)
+        print("test data mse by keras = %f" % scores[1])
+        print("test data mse by sklearn = %f" % mean_squared_error(Y, predictions))
+        for idx, value in enumerate(predictions):
+            if value > 0:
+                predictions[idx] = 1
+            elif value == 0:
+                predictions[idx] = 0
+            elif value < 0:
+                predictions[idx] = -1
+
+        for idx, value in enumerate(Y):
+            if value > 0:
+                Y[idx] = 1
+            elif value == 0:
+                Y[idx] = 0
+            elif value < 0:
+                Y[idx] = -1
+
+        print("test data micro f1 score by sklearn = %f" % f1_score(Y, predictions, average='micro'))
+        print("test data macro f1 score by sklearn = %f" % f1_score(Y, predictions, average='macro'))
         #print("test data scores[1](loss = mse) = %f" % scores[1])
         #raise Exception ('Implement your testing function')
+        (X,Y), (X_val, Y_val) = dm.split_data('train_data', args.val_ratio)
+        tweets = X[0, :]
+        snippets = X[1, :]
+        targets = X[2, :]
+        predictions = model.predict([tweets, snippets, targets])
+        #scores = np.sum((predictions - Y)**2)/len(Y)
+        scores = model.evaluate([tweets, snippets, targets], Y)
+        print("train data mse by keras = %f" % scores[1])
+        print("train data mse by sklearn = %f" % mean_squared_error(Y, predictions))
+        for idx, value in enumerate(predictions):
+            if value > 0:
+                predictions[idx] = 1
+            elif value == 0:
+                predictions[idx] = 0
+            elif value < 0:
+                predictions[idx] = -1
+
+        for idx, value in enumerate(Y):
+            if value > 0:
+                Y[idx] = 1
+            elif value == 0:
+                Y[idx] = 0
+            elif value < 0:
+                Y[idx] = -1
+
+        print("train data micro f1 score by sklearn = %f" % f1_score(Y, predictions, average='micro'))
+        print("train data macro f1 score by sklearn = %f" % f1_score(Y, predictions, average='macro'))         
 
     # semi-supervised training
     elif args.action == 'semi':

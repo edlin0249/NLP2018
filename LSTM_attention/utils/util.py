@@ -113,11 +113,11 @@ class DataManager:
     #  ratio : float, ratio to split
     def split_data(self, name, ratio):
         data = self.data[name]
-        print(data[0])
+        #print(data[0])
         X = np.array(data[0])
         Y = np.array(data[1])
         data_size = len(X[0])
         val_size = int(data_size * ratio)
-        print("val_size = %d"%val_size)
+        #print("val_size = %d"%val_size)
         return (X[:, val_size:],Y[val_size:]),(X[:, :val_size],Y[:val_size])
     

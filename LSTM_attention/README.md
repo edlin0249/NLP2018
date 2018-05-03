@@ -1,11 +1,13 @@
 Because the model is too big to upload to github directly, I upload the model to dropbox. Hence, before start testing, as follows if currently in the same directory with the *READMD.md*:
 
-wget -P ./model/train_model/ https://www.dropbox.com/s/811u88rba9ea876/model.h5?dl=1
+wget -P ./model/train_model/ https://www.dropbox.com/s/eakc4rkvchjnryk/model.h5?dl=1
+wget -P ./model/train_model/ https://www.dropbox.com/s/oti4kqx54wd9c34/token.pk?dl=1
 mv ./model/train_model/model.h5?dl=1 ./model/train_model/model.h5
+mv ./model/train_model/token.pk?dl=1 ./model/train_model/token.pk
 
 train
 
->python3 main.py train_model train --cell LSTM --val_ratio 0
+>python3 main.py train_model train --cell LSTM
 
 test:
 
