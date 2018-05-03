@@ -1,8 +1,11 @@
 Because the model is too big to upload to github directly, I upload the model to dropbox. Hence, before start testing, as follows if currently in the same directory with the *READMD.md*:
 
 wget -P ./model/train_model/ https://www.dropbox.com/s/qbej7xjhkxwtlw6/model.h5?dl=1
+
 wget -P ./model/train_model/ https://www.dropbox.com/s/vwhrnz5hlshnjk7/word2vec.model?dl=1
+
 mv ./model/train_model/model.h5?dl=1 ./model/train_model/model.h5
+
 mv ./model/train_model/word2vec.model?dl=1 ./model/train_model/word2vec.model
 
 train
