@@ -3,6 +3,8 @@ import keras
 import _pickle as pk
 import readline
 import numpy as np
+from sklearn.metrics import f1_score
+from sklearn.metrics import mean_squared_error
 
 from keras import regularizers
 from keras.models import Model
@@ -110,6 +112,7 @@ def main():
         dm.add_data('train_data', train_path, True)
         dm.add_data('semi_data', semi_path, False)
     elif args.action == 'test':
+        dm.add_data('train_data', train_path, True)
         dm.add_data('test_data', test_path, True)
     else:
         raise Exception ('Action except for train, semi, and test')
@@ -184,7 +187,51 @@ def main():
         (X,Y), (X_val, Y_val) = dm.split_data('test_data', args.val_ratio)
         predictions = model.predict(X)
         scores = model.evaluate(X, Y)
-        print("test data scores(loss = mse) = %f" % scores[1])
+        print("test data mse by keras = %f" % scores[1])
+        print("test data mse by sklearn = %f" % mean_squared_error(Y, predictions))
+        for idx, value in enumerate(predictions):
+            if value > 0:
+                predictions[idx] = 1
+            elif value == 0:
+                predictions[idx] = 0
+            elif value < 0:
+                predictions[idx] = -1
+
+        for idx, value in enumerate(Y):
+            if value > 0:
+                Y[idx] = 1
+            elif value == 0:
+                Y[idx] = 0
+            elif value < 0:
+                Y[idx] = -1
+
+        print("test data micro f1 score by sklearn = %f" % f1_score(Y, predictions, average='micro'))
+        print("test data macro f1 score by sklearn = %f" % f1_score(Y, predictions, average='macro'))
+
+        (X,Y), (X_val, Y_val) = dm.split_data('train_data', args.val_ratio)
+        predictions = model.predict(X)
+        scores = model.evaluate(X, Y)
+        print("train data mse by keras = %f" % scores[1])
+        print("train data mse by sklearn = %f" % mean_squared_error(Y, predictions))
+        for idx, value in enumerate(predictions):
+            if value > 0:
+                predictions[idx] = 1
+            elif value == 0:
+                predictions[idx] = 0
+            elif value < 0:
+                predictions[idx] = -1
+
+        for idx, value in enumerate(Y):
+            if value > 0:
+                Y[idx] = 1
+            elif value == 0:
+                Y[idx] = 0
+            elif value < 0:
+                Y[idx] = -1
+
+        print("train data micro f1 score by sklearn = %f" % f1_score(Y, predictions, average='micro'))
+        print("train data macro f1 score by sklearn = %f" % f1_score(Y, predictions, average='macro'))      
+
         #raise Exception ('Implement your testing function')
 
     # semi-supervised training
