@@ -1,6 +1,6 @@
 import json
 from pprint import pprint
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error,f1_score
 import numpy as np
 import re
 from keras.preprocessing.text import Tokenizer
@@ -64,9 +64,24 @@ def simpleRegPred(d,dataset):
 	print('Valid 0: ',evaluation([0]*len(dataset),[float(i['sentiment']) for i in dataset]))
 	return 
 
+def score2class(x):
+	x = np.array(x)
+	x[x>0] = 1
+	x[x<0] = -1
+	return x
+
 def evaluation(pred,ground,mode='mse'):
+	
 	if mode == 'mse':
 		return mean_squared_error(ground, pred)
+
+	pred = score2class(pred)
+	ground = score2class(ground)
+
+	if mode == 'f1_micro':
+		return f1_score(ground,pred,average='micro')
+	elif mode == 'fi_macro':
+		return f1_score(ground,pred,average='macro')
 
 def scoreDistribution(x):
 	import matplotlib.pyplot as plt
@@ -113,22 +128,22 @@ def parseWord(data):
 		input()
 
 
-
-
-if __name__ == '__main__':
 	
 if __name__ == '__main__':
 	
 	trainData, validData, testData = loadData()
-	scoreDistribution(trainData+validData+testData)
+	# scoreDistribution(trainData+validData+testData)
 
 	d = simpleReg(trainData)
 
 	pred = []
-	for i in validData:
+	for i in testData:
 		if i['target'] in d: 
 			pred.append(d[i['target']])
 		else:
 			pred.append(0)
 
-	pprint(evaluation(pred,[float(i['sentiment']) for i in validData])) 
+	ground = [float(i['sentiment']) for i in testData]
+	print("mse: ",evaluation(pred, ground, 'mse'))
+	print("micro: ",evaluation(pred, ground, 'f1_micro'))
+	print("macro: ",evaluation(pred, ground, 'f1_macro')) 
