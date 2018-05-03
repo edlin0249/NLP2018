@@ -1,6 +1,6 @@
 import json
 from pprint import pprint
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error,f1_score
 import numpy as np
 import re
 from util import DataManager
@@ -56,11 +56,34 @@ def inference(D,scoreArr):
 		ans.append(scoreSum / cnt)
 	return ans
 
+def score2class(x):
+	x = np.array(x)
+	x[x>0] = 1
+	x[x<0] = -1
+	return x
+
+def evaluation(pred,ground,mode='mse'):
+	
+	if mode == 'mse':
+		return mean_squared_error(ground, pred)
+
+	pred = score2class(pred)
+	ground = score2class(ground)
+
+	if mode == 'f1_micro':
+		return f1_score(ground,pred,average='micro')
+	elif mode == 'f1_macro':
+		return f1_score(ground,pred,average='macro')
+
 if __name__ == '__main__':
 	
 	D = prepData()
 	A,b = buildLinearSystem(D)
 	x = np.clip(np.linalg.lstsq(A,b)[0],-1,1) # solve the linear system
 	# the value calculated by LS might over the [-1,1]
-	ans = inference(D,x)
-	print(evaluation(ans,D.get_data('testData')[1]))
+	pred = inference(D,x)
+	ground = D.get_data('testData')[1]
+	
+	print("mse: ",evaluation(pred, ground, 'mse'))
+	print("micro: ",evaluation(pred, ground, 'f1_micro'))
+	print("macro: ",evaluation(pred, ground, 'f1_macro')) 

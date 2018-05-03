@@ -3,6 +3,7 @@ import keras
 import _pickle as pk
 import readline
 import numpy as np
+from sklearn.metrics import mean_squared_error,f1_score
 
 from keras import regularizers
 from keras.models import Model
@@ -110,6 +111,25 @@ def simpleRNN(args,embedding_matrix,word_index):
     
     return model
 
+def score2class(x):
+    x = np.array(x)
+    x[x>0] = 1
+    x[x<0] = -1
+    return x.copy()
+
+def evaluation(pred,ground,mode='mse'):
+    
+    if mode == 'mse':
+        return mean_squared_error(ground, pred)
+
+    pred = score2class(pred)
+    ground = score2class(ground)
+
+    if mode == 'f1_micro':
+        return f1_score(ground,pred,average='micro')
+    elif mode == 'f1_macro':
+        return f1_score(ground,pred,average='macro')
+
 def main():
     # limit gpu memory usage
     def get_session(gpu_fraction):
@@ -205,10 +225,13 @@ def main():
     elif args.action == 'test' :
         args.val_ratio = 0
         (X,Y), (X_val, Y_val) = dm.split_data('test_data', args.val_ratio)
-        predictions = model.predict(X)
+        pred = model.predict(X)
         scores = model.evaluate(X, Y)
         print("test data scores(loss = mse) = %f" % scores[1])
-        #raise Exception ('Implement your testing function')
+        print("mse: ",evaluation(pred, Y, 'mse'))
+        print("micro: ",evaluation(pred, Y, 'f1_micro'))
+        print("macro: ",evaluation(pred, Y, 'f1_macro')) 
+    
 
     # semi-supervised training
     elif args.action == 'semi':

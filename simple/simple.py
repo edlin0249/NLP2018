@@ -80,7 +80,7 @@ def evaluation(pred,ground,mode='mse'):
 
 	if mode == 'f1_micro':
 		return f1_score(ground,pred,average='micro')
-	elif mode == 'fi_macro':
+	elif mode == 'f1_macro':
 		return f1_score(ground,pred,average='macro')
 
 def scoreDistribution(x):
