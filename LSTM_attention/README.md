@@ -16,7 +16,7 @@ test:
 
 >python3 main.py train_model test --cell LSTM --load_model train_model
 
-test data scores(loss = mse) = 0.525961
+test data scores(loss = mse) = 0.169153
 
 references:
 
