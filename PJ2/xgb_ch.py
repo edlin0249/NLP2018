@@ -3,7 +3,6 @@ import numpy as np
 import os
 import datetime
 import time
-from text_cnn import TextCNN
 import data_helpers_ch as data_helpers
 from sklearn.metrics import f1_score
 import warnings
