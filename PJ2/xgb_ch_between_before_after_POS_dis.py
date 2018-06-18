@@ -132,7 +132,7 @@ def train():
                  15: 'Member-Collection(e1,e2)', 16: 'Member-Collection(e2,e1)',
                  17: 'Content-Container(e1,e2)', 18: 'Content-Container(e2,e1)'}
 
-    with open('./ans/ans_xgb_between_before_after_POS_dis.txt','w') as f:
+    with open('.ans_xgb_between_before_after_POS_dis.txt','w') as f:
         for idx,ele in enumerate(preds):
             f.write('%d\t%s\n' %(idx + 8001, labelsMapping[ele]))
     
