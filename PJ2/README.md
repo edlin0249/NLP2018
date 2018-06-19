@@ -17,6 +17,7 @@
 train and eval: `python3 {model you want to use}.py` (will generate *.txt (* depends on model you selected) in current directory )
 ensemble: `python3 ensemble.py` (will generate ensemble.txt in current directory)
 
+generate confusion matrix: `perl semeval2010_task8_scorer-v1.2.pl [proposed_answer1.txt] answer_key.txt > [result_example.txt]`
 
 ### Requirement
 + tqdm 4.19.5
