@@ -17,7 +17,7 @@ warnings.filterwarnings("ignore", category=sklearn.exceptions.UndefinedMetricWar
 # Data loading params
 tf.flags.DEFINE_string("train_dir", "data/TRAIN_FILE.txt", "Path of train data")
 tf.flags.DEFINE_float("dev_sample_percentage", .1, "Percentage of the training data to use for validation")
-tf.flags.DEFINE_integer("max_sentence_length", 20, "Max sentence length in train(98)/test(70) data (Default: 100)")
+tf.flags.DEFINE_integer("max_sentence_length", 100, "Max sentence length in train(98)/test(70) data (Default: 100)")
 tf.flags.DEFINE_string("eval_dir", "data/TEST_FILE.txt", "Path of evaluation data")
 
 # xxxxx parameters
