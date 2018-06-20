@@ -1,0 +1,1 @@
+python3 main.py test -checkpoint_dir ./runs/1529500308/checkpoints/ -model_path ./runs/1529500308/checkpoints/model/textcnn_step_10700.pt
