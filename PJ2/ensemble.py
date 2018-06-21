@@ -21,7 +21,8 @@ file_acc = [
 [ "ans_xgb_between_before_after.txt", 0.6833 ] ,
 [ "ans_xgb_between.txt", 0.7084 ] ,
 [ "ans_xgb.txt", 0.5634 ],
-[ "ans_xgb_between_before_after_POS_dis_extreme.txt", 0.7694]
+[ "ans_xgb_between_before_after_POS_dis_extreme.txt", 0.7694],
+[ "ans_textcnn_pytorch.txt", 0.7252]
 ]
 
 label2num = {'Other': 0,
